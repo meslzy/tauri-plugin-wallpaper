@@ -1,0 +1,26 @@
+{
+  "name": "webview",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint source --ext .ts,.tsx --fix"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.0",
+    "@mantine/core": "^6.0.15",
+    "@mantine/hooks": "^6.0.15",
+    "@tauri-apps/api": "^1.4.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tauri-plugin-wallpaper": "file:../../../.."
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.14",
+    "@types/react-dom": "^18.2.6",
+    "@vitejs/plugin-react": "^4.0.1",
+    "vite": "^4.3.9",
+    "vite-tsconfig-paths": "^4.2.0"
+  },
+  "private": true
+}

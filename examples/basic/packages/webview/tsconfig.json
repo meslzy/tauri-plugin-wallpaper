@@ -1,0 +1,31 @@
+{
+  "extends": "@meslzy/tsconfig/react",
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "baseUrl": "source",
+    "outDir": "dist",
+    "paths": {
+      "~/*": [
+        "./*"
+      ],
+      "~app/*": [
+        "./app/*"
+      ]
+    },
+    "esModuleInterop": true,
+    "jsx": "react",
+    "types": [
+      "vite/client"
+    ]
+  },
+  "include": [
+    "source"
+  ],
+  "exclude": [
+    "dist"
+  ]
+}

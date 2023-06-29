@@ -1,0 +1,17 @@
+# rust
+/target
+
+# ide
+.idea/
+
+# node
+node_modules/
+
+# package manager
+package-lock.json
+
+# output
+dist/
+
+# rosepack
+rosepack.d.ts

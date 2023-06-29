@@ -1,0 +1,11 @@
+{
+  "extends": "@meslzy/tsconfig",
+  "include": [
+    "lib",
+    "rosepack.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}
