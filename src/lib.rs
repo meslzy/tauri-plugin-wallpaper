@@ -38,9 +38,17 @@ impl<R: Runtime> WallpaperPlugin<R> {
   }
 
   pub fn attach(window: &Window<R>) {
-    if cfg!(target_os = "windows") {
+    #[cfg(target_os = "windows")]
+    {
       let hwnd = window.hwnd().unwrap();
       platforms::windows::attach(hwnd);
+      return;
+    }
+
+    #[cfg(target_os = "macos")]
+    {
+      let ns_window = window.ns_window().unwrap();
+      platforms::macos::attach(ns_window);
       return;
     }
 
@@ -48,9 +56,17 @@ impl<R: Runtime> WallpaperPlugin<R> {
   }
 
   pub fn detach(window: &Window<R>) {
-    if cfg!(target_os = "windows") {
+    #[cfg(target_os = "windows")]
+    {
       let hwnd = window.hwnd().unwrap();
       platforms::windows::detach(hwnd);
+      return;
+    }
+
+    #[cfg(target_os = "macos")]
+    {
+      let ns_window = window.ns_window().unwrap();
+      platforms::macos::detach(ns_window);
       return;
     }
 

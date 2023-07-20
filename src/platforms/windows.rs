@@ -3,7 +3,12 @@ use std::ptr::null_mut;
 use windows::{
   core::s,
   Win32::{
-    Foundation::{BOOL, HWND, LPARAM, WPARAM},
+    Foundation::{
+      BOOL,
+      HWND,
+      LPARAM,
+      WPARAM
+    },
     UI::WindowsAndMessaging,
   },
 };

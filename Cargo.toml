@@ -26,5 +26,5 @@ features = [
     "Win32_Foundation"
 ]
 
-[target."cfg(windows)".dependencies.cocoa]
+[target."cfg(macos)".dependencies.cocoa]
 version = "0.24"
