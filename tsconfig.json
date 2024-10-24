@@ -1,0 +1,10 @@
+{
+  "extends": "@meslzy/tsconfig",
+  "include": [
+    "lib"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

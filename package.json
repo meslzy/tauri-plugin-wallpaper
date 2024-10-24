@@ -1,0 +1,41 @@
+{
+  "name": "tauri-plugin-wallpaper",
+  "description": "A Tauri plugin to set your window as wallpaper behind desktop icons",
+  "version": "2.0.0-beta",
+  "author": {
+    "name": "meslzy",
+    "email": "i@meslzy.com",
+    "url": "https://meslzy.com/"
+  },
+  "repository": "github:meslzy/tauri-plugin-wallpaper",
+  "bugs": "https://github.com/meslzy/tauri-plugin-wallpaper/issues",
+  "homepage": "https://github.com/meslzy/tauri-plugin-wallpaper#readme",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
+  "type": "module",
+  "scripts": {
+    "watch": "tsup --watch",
+    "build": "tsup",
+    "lint": "eslint --fix"
+  },
+  "devDependencies": {
+    "@tauri-apps/api": "^2.0.2",
+    "@meslzy/eslint": "^1.0.6",
+    "@meslzy/tsconfig": "^0.2.8",
+    "eslint": "^9.12.0",
+    "typescript": "^5.6.3",
+    "tsup": "^8.3.0"
+  },
+  "peerDependencies": {
+    "@tauri-apps/api": ">=2"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "meslzy",
+    "tauri-plugin",
+    "wallpaper"
+  ],
+  "license": "mit"
+}

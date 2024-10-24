@@ -1,0 +1,10 @@
+# rust
+target/
+gen/schemas
+
+
+# node
+node_modules/
+
+# build
+dist/
