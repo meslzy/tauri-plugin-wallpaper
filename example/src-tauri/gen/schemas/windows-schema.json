@@ -1655,6 +1655,41 @@
           "description": "Denies the unminimize command without any pre-configured scope.",
           "type": "string",
           "const": "core:window:deny-unminimize"
+        },
+        {
+          "description": "Default permissions for the plugin",
+          "type": "string",
+          "const": "wallpaper:default"
+        },
+        {
+          "description": "Enables the attach command without any pre-configured scope.",
+          "type": "string",
+          "const": "wallpaper:allow-attach"
+        },
+        {
+          "description": "Enables the detach command without any pre-configured scope.",
+          "type": "string",
+          "const": "wallpaper:allow-detach"
+        },
+        {
+          "description": "Enables the reset command without any pre-configured scope.",
+          "type": "string",
+          "const": "wallpaper:allow-reset"
+        },
+        {
+          "description": "Denies the attach command without any pre-configured scope.",
+          "type": "string",
+          "const": "wallpaper:deny-attach"
+        },
+        {
+          "description": "Denies the detach command without any pre-configured scope.",
+          "type": "string",
+          "const": "wallpaper:deny-detach"
+        },
+        {
+          "description": "Denies the reset command without any pre-configured scope.",
+          "type": "string",
+          "const": "wallpaper:deny-reset"
         }
       ]
     },

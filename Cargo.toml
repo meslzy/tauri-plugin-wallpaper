@@ -1,6 +1,6 @@
 [package]
 name = "tauri-plugin-wallpaper"
-version = "2.0.0-beta"
+version = "2.0.0"
 authors = ["Meslzy"]
 description = "A Tauri plugin to set your window as wallpaper behind desktop icons"
 repository = "https://github.com/meslzy/tauri-plugin-wallpaper"
@@ -11,6 +11,13 @@ rust-version = "1.77.2"
 include = ["/permissions", "/src", "build.rs", "Cargo.toml"]
 links = "tauri-plugin-wallpaper"
 license = "MIT"
+
+[package.metadata.platforms.support]
+windows = { level = "full", notes = "" }
+linux = { level = "none", notes = "" }
+macos = { level = "none", notes = "" }
+android = { level = "none", notes = "" }
+ios = { level = "none", notes = "" }
 
 [dependencies]
 tauri = { version = "2.0.6" }
