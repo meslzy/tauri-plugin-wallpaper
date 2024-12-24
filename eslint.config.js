@@ -1,3 +1,5 @@
-import meslzyConfig from "@meslzy/eslint";
+import { meslzyConfigs } from "@meslzy/eslint";
 
-export default meslzyConfig;
+export default [
+  ...meslzyConfigs(),
+];

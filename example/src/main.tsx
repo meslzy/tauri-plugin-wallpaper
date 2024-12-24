@@ -1,9 +1,8 @@
 import React from "react";
-
-import wallpaper from "tauri-plugin-wallpaper";
+import ReactDOM from "react-dom/client";
 
 import { invoke } from "@tauri-apps/api/core";
-import ReactDOM from "react-dom/client";
+import wallpaper from "tauri-plugin-wallpaper";
 
 import "./main.css";
 
@@ -40,7 +39,6 @@ const App = () => {
         <button style={{ background: "#ad1d02" }} id={"detach"} onClick={detach}>Detach</button>
         <button style={{ background: "#acb06b" }} id={"reset"} onClick={reset}>Reset</button>
       </div>
-
       <div>
         <button style={{ background: "#34a0a6" }} id={"show"} onClick={show}>Show</button>
         <button style={{ background: "#ad1d02" }} id={"hide"} onClick={hide}>Hide</button>
