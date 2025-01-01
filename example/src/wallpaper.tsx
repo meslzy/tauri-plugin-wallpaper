@@ -1,7 +1,7 @@
+import "./wallpaper.css";
+
 import React from "react";
 import ReactDOM from "react-dom/client";
-
-import "./wallpaper.css";
 
 const App = () => {
   const [currentTime, setCurrentTime] = React.useState(new Date());

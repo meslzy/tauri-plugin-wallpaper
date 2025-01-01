@@ -1,13 +1,13 @@
 [package]
 name = "tauri-plugin-wallpaper"
-version = "2.0.0"
+version = "2.0.2"
 authors = ["Meslzy"]
 description = "A Tauri plugin to set your window as wallpaper behind desktop icons"
 repository = "https://github.com/meslzy/tauri-plugin-wallpaper"
 homepage = "https://github.com/meslzy/tauri-plugin-wallpaper"
 documentation = "https://docs.rs/tauri-plugin-wallpaper"
 edition = "2021"
-rust-version = "1.77.2"
+rust-version = "1.87.0"
 include = ["/permissions", "/src", "build.rs", "Cargo.toml"]
 links = "tauri-plugin-wallpaper"
 license = "MIT"
@@ -20,13 +20,13 @@ android = { level = "none", notes = "" }
 ios = { level = "none", notes = "" }
 
 [dependencies]
-tauri = { version = "2.0.6" }
-serde = "1.0"
-thiserror = "1.0"
+tauri = "^2.5.1"
+serde = "^1.0.219"
+thiserror = "^2.0.12"
 
 [target."cfg(windows)".dependencies.windows]
-version = "0.58"
+version = "^0.61"
 features = ["Win32_Foundation", "Win32_UI_WindowsAndMessaging"]
 
 [build-dependencies]
-tauri-plugin = { version = "2.0.1", features = ["build"] }
+tauri-plugin = { version = "^2.2.0", features = ["build"] }

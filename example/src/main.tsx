@@ -1,10 +1,10 @@
+import "./main.css";
+
 import React from "react";
 import ReactDOM from "react-dom/client";
 
 import { invoke } from "@tauri-apps/api/core";
 import wallpaper from "tauri-plugin-wallpaper";
-
-import "./main.css";
 
 const App = () => {
   const attach = async () => {
