@@ -1,6 +1,6 @@
 [package]
 name = "tauri-plugin-wallpaper"
-version = "2.0.0"
+version = "2.0.1"
 authors = ["Meslzy"]
 description = "A Tauri plugin to set your window as wallpaper behind desktop icons"
 repository = "https://github.com/meslzy/tauri-plugin-wallpaper"

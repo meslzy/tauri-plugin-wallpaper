@@ -1,7 +1,7 @@
 {
   "name": "tauri-plugin-wallpaper",
   "description": "A Tauri plugin to set your window as wallpaper behind desktop icons",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "author": {
     "name": "meslzy",
     "email": "i@meslzy.com",

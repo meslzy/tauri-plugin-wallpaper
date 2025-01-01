@@ -29,13 +29,13 @@
   - cargo
 
     ```bash
-    cargo add tauri-plugin-wallpaper@2
+    cargo add tauri-plugin-wallpaper
     ```
 
   - npm
 
     ```bash
-    npm install tauri-plugin-wallpaper@2
+    npm install tauri-plugin-wallpaper
     ```
 
 ### How to use (🌠)
