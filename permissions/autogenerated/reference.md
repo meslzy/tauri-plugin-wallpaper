@@ -2,6 +2,8 @@
 
 Default permissions for the plugin
 
+#### This default permission set includes the following:
+
 - `allow-attach`
 - `allow-detach`
 - `allow-reset`

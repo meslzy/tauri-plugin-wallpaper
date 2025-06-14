@@ -25,8 +25,11 @@ serde = "1.0"
 thiserror = "1.0"
 
 [target."cfg(windows)".dependencies.windows]
-version = "0.58"
+version = "0.61.3"
 features = ["Win32_Foundation", "Win32_UI_WindowsAndMessaging"]
+
+[target."cfg(windows)".dependencies.windows-core]
+version = "0.61.2"
 
 [build-dependencies]
 tauri-plugin = { version = "2.0.1", features = ["build"] }

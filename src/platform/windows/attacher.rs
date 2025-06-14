@@ -1,16 +1,17 @@
 use windows::{
     core::s,
     Win32::{
-        Foundation::{BOOL, HWND, LPARAM, WPARAM},
+        Foundation::{HWND, LPARAM, WPARAM},
         UI::WindowsAndMessaging,
     },
 };
+use windows_core::BOOL;
 
 extern "system" fn enum_window(window: HWND, ref_worker_w: LPARAM) -> BOOL {
     unsafe {
         let shell_dll_def_view = WindowsAndMessaging::FindWindowExA(
-            window,
-            HWND::default(),
+            Some(window),
+            Some(HWND::default()),
             s!("SHELLDLL_DefView"),
             None,
         )
@@ -18,7 +19,7 @@ extern "system" fn enum_window(window: HWND, ref_worker_w: LPARAM) -> BOOL {
 
         if !HWND::is_invalid(&shell_dll_def_view) {
             let worker_w =
-                WindowsAndMessaging::FindWindowExA(HWND::default(), window, s!("WorkerW"), None)
+                WindowsAndMessaging::FindWindowExA(Some(HWND::default()), Some(window), s!("WorkerW"), None)
                     .unwrap_or(HWND::default());
 
             if !HWND::is_invalid(&worker_w) {
@@ -56,14 +57,14 @@ pub fn attach<R: tauri::Runtime>(webview_window: tauri::WebviewWindow<R>) -> cra
 
         if HWND::is_invalid(&worker_w) {
             worker_w = WindowsAndMessaging::FindWindowExA(
-                progman_hwnd,
-                HWND::default(),
+                Some(progman_hwnd),
+                Some(HWND::default()),
                 s!("WorkerW"),
                 None,
             ).unwrap();
         }
 
-        WindowsAndMessaging::SetParent(hwnd, worker_w).unwrap();
+        WindowsAndMessaging::SetParent(hwnd, Some(worker_w)).unwrap();
     }
 
     Ok(())

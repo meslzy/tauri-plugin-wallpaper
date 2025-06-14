@@ -49,7 +49,7 @@
           "minimum": 1.0
         },
         "description": {
-          "description": "Human-readable description of what the permission does. Tauri convention is to use <h4> headings in markdown content for Tauri documentation generation purposes.",
+          "description": "Human-readable description of what the permission does. Tauri convention is to use `<h4>` headings in markdown content for Tauri documentation generation purposes.",
           "type": [
             "string",
             "null"
@@ -111,7 +111,7 @@
           "type": "string"
         },
         "description": {
-          "description": "Human-readable description of what the permission does. Tauri internal convention is to use <h4> headings in markdown content for Tauri documentation generation purposes.",
+          "description": "Human-readable description of what the permission does. Tauri internal convention is to use `<h4>` headings in markdown content for Tauri documentation generation purposes.",
           "type": [
             "string",
             "null"
@@ -297,37 +297,44 @@
         {
           "description": "Enables the attach command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-attach"
+          "const": "allow-attach",
+          "markdownDescription": "Enables the attach command without any pre-configured scope."
         },
         {
           "description": "Denies the attach command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-attach"
+          "const": "deny-attach",
+          "markdownDescription": "Denies the attach command without any pre-configured scope."
         },
         {
           "description": "Enables the detach command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-detach"
+          "const": "allow-detach",
+          "markdownDescription": "Enables the detach command without any pre-configured scope."
         },
         {
           "description": "Denies the detach command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-detach"
+          "const": "deny-detach",
+          "markdownDescription": "Denies the detach command without any pre-configured scope."
         },
         {
           "description": "Enables the reset command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-reset"
+          "const": "allow-reset",
+          "markdownDescription": "Enables the reset command without any pre-configured scope."
         },
         {
           "description": "Denies the reset command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-reset"
+          "const": "deny-reset",
+          "markdownDescription": "Denies the reset command without any pre-configured scope."
         },
         {
-          "description": "Default permissions for the plugin",
+          "description": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-attach`\n- `allow-detach`\n- `allow-reset`",
           "type": "string",
-          "const": "default"
+          "const": "default",
+          "markdownDescription": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-attach`\n- `allow-detach`\n- `allow-reset`"
         }
       ]
     }
