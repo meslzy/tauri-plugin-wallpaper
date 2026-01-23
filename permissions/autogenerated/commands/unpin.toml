@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-unpin"
+description = "Enables the unpin command without any pre-configured scope."
+commands.allow = ["unpin"]
+
+[[permission]]
+identifier = "deny-unpin"
+description = "Denies the unpin command without any pre-configured scope."
+commands.deny = ["unpin"]

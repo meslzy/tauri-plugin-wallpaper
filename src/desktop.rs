@@ -2,7 +2,7 @@ use serde::de::DeserializeOwned;
 use tauri::{plugin::PluginApi, AppHandle, Manager, Runtime, WebviewWindow};
 
 use crate::models::*;
-use crate::{attacher, detacher, reseter};
+use crate::{attacher, detacher, pinner, reseter, unpinner};
 
 pub fn init<R: Runtime, C: DeserializeOwned>(
     app: &AppHandle<R>,
@@ -38,5 +38,23 @@ impl<R: Runtime> Wallpaper<R> {
 
     pub fn reset(&self) -> crate::Result<()> {
         reseter::reset()
+    }
+
+    pub fn pin(&self, payload: PinRequest) -> crate::Result<()> {
+        let webview_window = self.get_webview_window(&payload.window_label);
+        pinner::pin(webview_window)
+    }
+
+    pub fn pin_window(&self, webview_window: &WebviewWindow<R>) -> crate::Result<()> {
+        pinner::pin(webview_window.clone())
+    }
+
+    pub fn unpin(&self, payload: UnpinRequest) -> crate::Result<()> {
+        let webview_window = self.get_webview_window(&payload.window_label);
+        unpinner::unpin(webview_window)
+    }
+
+    pub fn unpin_window(&self, webview_window: &WebviewWindow<R>) -> crate::Result<()> {
+        unpinner::unpin(webview_window.clone())
     }
 }

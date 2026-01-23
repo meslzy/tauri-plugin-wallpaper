@@ -29,6 +29,17 @@
         "decorations": false,
         "hiddenTitle": true,
         "fullscreen": false
+      },
+      {
+        "label": "pin",
+        "title": "tauri-pin",
+        "url": "pin.html",
+        "skipTaskbar": true,
+        "visible": false,
+        "decorations": false,
+        "hiddenTitle": true,
+        "width": 400,
+        "height": 200
       }
     ]
   },

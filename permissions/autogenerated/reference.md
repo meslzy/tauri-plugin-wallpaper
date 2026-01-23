@@ -7,6 +7,8 @@ Default permissions for the plugin
 - `allow-attach`
 - `allow-detach`
 - `allow-reset`
+- `allow-pin`
+- `allow-unpin`
 
 ## Permission Table
 
@@ -72,6 +74,32 @@ Denies the detach command without any pre-configured scope.
 <tr>
 <td>
 
+`wallpaper:allow-pin`
+
+</td>
+<td>
+
+Enables the pin command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`wallpaper:deny-pin`
+
+</td>
+<td>
+
+Denies the pin command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
 `wallpaper:allow-reset`
 
 </td>
@@ -91,6 +119,32 @@ Enables the reset command without any pre-configured scope.
 <td>
 
 Denies the reset command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`wallpaper:allow-unpin`
+
+</td>
+<td>
+
+Enables the unpin command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`wallpaper:deny-unpin`
+
+</td>
+<td>
+
+Denies the unpin command without any pre-configured scope.
 
 </td>
 </tr>

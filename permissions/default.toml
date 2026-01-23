@@ -1,3 +1,3 @@
 [default]
 description = "Default permissions for the plugin"
-permissions = ["allow-attach", "allow-detach", "allow-reset"]
+permissions = ["allow-attach", "allow-detach", "allow-reset", "allow-pin", "allow-unpin"]

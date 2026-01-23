@@ -17,16 +17,24 @@ body {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+  padding: 16px;
 }
 
-input {
+section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 8px;
-  width: 60%;
+  width: 100%;
+}
 
-  text-align: center;
-  border: gray 1px solid;
+section h3 {
+  margin-bottom: 4px;
+  color: #333;
 }
 
 div {

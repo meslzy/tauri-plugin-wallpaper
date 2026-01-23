@@ -2145,10 +2145,10 @@
           "markdownDescription": "Denies the unminimize command without any pre-configured scope."
         },
         {
-          "description": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-attach`\n- `allow-detach`\n- `allow-reset`",
+          "description": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-attach`\n- `allow-detach`\n- `allow-reset`\n- `allow-pin`\n- `allow-unpin`",
           "type": "string",
           "const": "wallpaper:default",
-          "markdownDescription": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-attach`\n- `allow-detach`\n- `allow-reset`"
+          "markdownDescription": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-attach`\n- `allow-detach`\n- `allow-reset`\n- `allow-pin`\n- `allow-unpin`"
         },
         {
           "description": "Enables the attach command without any pre-configured scope.",
@@ -2163,10 +2163,22 @@
           "markdownDescription": "Enables the detach command without any pre-configured scope."
         },
         {
+          "description": "Enables the pin command without any pre-configured scope.",
+          "type": "string",
+          "const": "wallpaper:allow-pin",
+          "markdownDescription": "Enables the pin command without any pre-configured scope."
+        },
+        {
           "description": "Enables the reset command without any pre-configured scope.",
           "type": "string",
           "const": "wallpaper:allow-reset",
           "markdownDescription": "Enables the reset command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the unpin command without any pre-configured scope.",
+          "type": "string",
+          "const": "wallpaper:allow-unpin",
+          "markdownDescription": "Enables the unpin command without any pre-configured scope."
         },
         {
           "description": "Denies the attach command without any pre-configured scope.",
@@ -2181,10 +2193,22 @@
           "markdownDescription": "Denies the detach command without any pre-configured scope."
         },
         {
+          "description": "Denies the pin command without any pre-configured scope.",
+          "type": "string",
+          "const": "wallpaper:deny-pin",
+          "markdownDescription": "Denies the pin command without any pre-configured scope."
+        },
+        {
           "description": "Denies the reset command without any pre-configured scope.",
           "type": "string",
           "const": "wallpaper:deny-reset",
           "markdownDescription": "Denies the reset command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the unpin command without any pre-configured scope.",
+          "type": "string",
+          "const": "wallpaper:deny-unpin",
+          "markdownDescription": "Denies the unpin command without any pre-configured scope."
         }
       ]
     },

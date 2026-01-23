@@ -4,7 +4,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Tauri Plugin Wallpaper - A Windows-only Tauri plugin that attaches/detaches windows as desktop wallpaper (behind icons) using Win32 APIs.
+Tauri Plugin Wallpaper - A Windows-only Tauri plugin for advanced window positioning:
+- **Wallpaper mode**: Attach windows behind desktop icons
+- **Pin mode**: Keep windows always-on-top that survive Win+D (Show Desktop)
+
+## Build Commands
+
+```bash
+# Build plugin
+cargo build
+
+# Build TypeScript bindings
+npm run build
+
+# Lint/format
+npm run lint
+
+# Run example app
+cd app && npm run tauri
+```
 
 ## Architecture
 
@@ -16,43 +34,62 @@ Tauri Plugin Wallpaper - A Windows-only Tauri plugin that attaches/detaches wind
 ### Core Rust Files
 
 - `lib.rs`: Plugin entry point, exports `init()` and `WallpaperExt` trait
-- `desktop.rs`: `Wallpaper<R>` state struct with `attach`/`detach`/`reset` methods
+- `desktop.rs`: `Wallpaper<R>` state struct with all methods
+- `commands.rs`: IPC command handlers for JavaScript bridge
+- `models.rs`: Request DTOs (`AttachRequest`, `DetachRequest`, `PinRequest`, `UnpinRequest`)
+
+**Wallpaper mode:**
 - `attacher.rs`: Win32 logic to parent window under WorkerW (desktop layer)
 - `detacher.rs`: Win32 logic to remove parent relationship
-- `commands.rs`: IPC command handlers for JavaScript bridge
-- `models.rs`: `AttachRequest`/`DetachRequest` DTOs
+- `reseter.rs`: Win32 logic to reset desktop wallpaper
 
-### Win32 Attachment Strategy
+**Pin mode:**
+- `pinner.rs`: Subclasses window procedure to intercept `WM_WINDOWPOSCHANGING`, blocks Win+D hide attempts, keeps window topmost
+- `unpinner.rs`: Restores original window procedure and removes topmost flag
 
-1. Find `Progman` window (main desktop window)
+### Win32 Strategies
+
+**Wallpaper (attach/detach):**
+1. Find `Progman` window
 2. Send message `0x052C` to spawn `WorkerW` layer
-3. Call `SetParent()` to reparent target window under `WorkerW`
-4. Window now renders behind desktop icons
+3. `SetParent()` to reparent window under `WorkerW`
+4. Window renders behind desktop icons
+
+**Pin (pin/unpin):**
+1. Set window to `HWND_TOPMOST`
+2. Subclass WNDPROC via `SetWindowLongPtrW`
+3. Intercept `WM_WINDOWPOSCHANGING` - when `pos->x == -32000` (Win+D), set `SWP_NOMOVE | SWP_NOSIZE` flags to block
+4. Always set `hwndInsertAfter = HWND_TOPMOST`
 
 ### Plugin Pattern
 
 ```rust
-// Access from AppHandle via trait extension
 use tauri_plugin_wallpaper::WallpaperExt;
+
+// Wallpaper mode
 app_handle.wallpaper().attach_window(&window)?;
+app_handle.wallpaper().detach_window(&window)?;
+
+// Pin mode
+app_handle.wallpaper().pin_window(&window)?;
+app_handle.wallpaper().unpin_window(&window)?;
 ```
 
 ### JavaScript API
 
-Commands follow Tauri plugin format: `plugin:wallpaper|{attach,detach,reset}`
+Commands: `plugin:wallpaper|{attach,detach,reset,pin,unpin}`
 
 ```typescript
-import { attach, detach, reset } from "tauri-plugin-wallpaper";
-attach("window-label");  // or attach() for current window
+import { attach, detach, reset, pin, unpin } from "tauri-plugin-wallpaper";
 ```
 
 ### Permissions
 
-Apps must include `"wallpaper:default"` in their Tauri permissions config to use JavaScript bindings.
+New commands must be added to `build.rs` COMMANDS array for permission auto-generation.
 
 ## Example App
 
-`/app` contains a working demo with:
-
-- Control window (attach/detach/reset buttons)
-- Wallpaper window (clock display that becomes desktop wallpaper)
+`/app` contains a demo with three windows:
+- **main**: Control panel with Wallpaper/Pin sections
+- **wallpaper**: Clock display for wallpaper mode
+- **pin**: Clock display for pin mode

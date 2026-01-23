@@ -14,7 +14,9 @@ mod models;
 
 mod attacher;
 mod detacher;
+mod pinner;
 mod reseter;
+mod unpinner;
 
 pub use error::{Error, Result};
 use desktop::Wallpaper;
@@ -34,7 +36,9 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
         .invoke_handler(tauri::generate_handler![
             commands::attach,
             commands::detach,
-            commands::reset
+            commands::reset,
+            commands::pin,
+            commands::unpin
         ])
         .setup(|app, api| {
             let wallpaper = desktop::init(app, api)?;

@@ -38,3 +38,41 @@ impl DetachRequest {
         }
     }
 }
+
+#[derive(Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PinRequest {
+    pub window_label: String,
+}
+
+impl PinRequest {
+    pub fn new(window_label: &str) -> Self {
+        Self {
+            window_label: window_label.to_string(),
+        }
+    }
+    pub fn from_webview_window(webview_window: WebviewWindow) -> Self {
+        Self {
+            window_label: webview_window.label().to_string(),
+        }
+    }
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct UnpinRequest {
+    pub window_label: String,
+}
+
+impl UnpinRequest {
+    pub fn new(window_label: &str) -> Self {
+        Self {
+            window_label: window_label.to_string(),
+        }
+    }
+    pub fn from_webview_window(webview_window: WebviewWindow) -> Self {
+        Self {
+            window_label: webview_window.label().to_string(),
+        }
+    }
+}

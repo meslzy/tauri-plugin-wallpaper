@@ -16,8 +16,9 @@
 	"scripts": {
 		"dev": "tsdown --watch",
 		"build": "tsdown",
-		"lint": "biome check --write --unsafe",
-		"prepublishOnly": "npm run build && npm run lint"
+		"check": "biome check",
+		"check:fix": "biome check --write --unsafe",
+		"prepublishOnly": "npm run build && npm run check"
 	},
 	"devDependencies": {
 		"@meslzy/tsconfig": "^0.2.9",
