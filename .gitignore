@@ -2,7 +2,6 @@
 target/
 gen/schemas
 
-
 # node
 node_modules/
 

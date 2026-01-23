@@ -25,13 +25,17 @@ const App = () => {
     return `${formattedHours}:${formattedMinutes}:${formattedSeconds} ${ampm}`;
   };
 
-  return <div>{ formatTime(currentTime) }</div>;
+  return <div>{formatTime(currentTime)}</div>;
 };
 
-const root = ReactDOM.createRoot(document.querySelector("#root")!);
+const rootElement = document.getElementById("root");
+
+if (!rootElement) throw new Error("Failed to find the root element");
+
+const root = ReactDOM.createRoot(rootElement);
 
 root.render(
   <React.StrictMode>
-    <App/>
+    <App />
   </React.StrictMode>,
 );

@@ -1,3 +1,5 @@
+#![cfg(target_os = "windows")]
+
 use tauri::{
     plugin::{Builder, TauriPlugin},
     Manager, Runtime,
@@ -5,18 +7,16 @@ use tauri::{
 
 pub use models::*;
 
-#[cfg(desktop)]
 mod desktop;
-
 mod commands;
 mod error;
 mod models;
 
-mod platform;
+mod attacher;
+mod detacher;
+mod reseter;
 
 pub use error::{Error, Result};
-
-#[cfg(desktop)]
 use desktop::Wallpaper;
 
 pub trait WallpaperExt<R: Runtime> {
@@ -37,7 +37,6 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             commands::reset
         ])
         .setup(|app, api| {
-            #[cfg(desktop)]
             let wallpaper = desktop::init(app, api)?;
             app.manage(wallpaper);
             Ok(())

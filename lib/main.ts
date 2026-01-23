@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import { WindowLabel, getCurrentWindow } from "@tauri-apps/api/window";
+import { getCurrentWindow, type WindowLabel } from "@tauri-apps/api/window";
 
 enum Action {
   Attach = "attach",
@@ -7,17 +7,15 @@ enum Action {
   Reset = "reset",
 }
 
-const currentWindow = getCurrentWindow();
-
 const action = (action: Action) => `plugin:wallpaper|${action}`;
 
 /**
  * Attaches window to the desktop.
  * @param windowLabel The window label to attach the desktop to. If not provided, the current window will be used.
  */
-const attach = (windowLabel?: WindowLabel) => {
+export const attach = (windowLabel?: WindowLabel) => {
   if (!windowLabel) {
-    windowLabel = currentWindow.label;
+    windowLabel = getCurrentWindow().label;
   }
 
   return invoke(action(Action.Attach), {
@@ -31,9 +29,9 @@ const attach = (windowLabel?: WindowLabel) => {
  * Detaches window from the desktop.
  * @param windowLabel The window label to detach the desktop from. If not provided, the current window will be used.
  */
-const detach = (windowLabel?: WindowLabel) => {
+export const detach = (windowLabel?: WindowLabel) => {
   if (!windowLabel) {
-    windowLabel = currentWindow.label;
+    windowLabel = getCurrentWindow().label;
   }
 
   return invoke(action(Action.Detach), {
@@ -46,31 +44,12 @@ const detach = (windowLabel?: WindowLabel) => {
 /**
  * Resets the wallpaper to the default.
  */
-const reset = () => {
+export const reset = () => {
   return invoke(action(Action.Reset));
 };
 
-const wallpaper = {
-  /**
-   * Attaches window to the desktop.
-   * @param windowLabel The window label to attach the desktop to. If not provided, the current window will be used.
-   **/
-  attach,
-  /**
-   * Detaches window from the desktop.
-   * @param windowLabel The window label to detach the desktop from. If not provided, the current window will be used.
-   **/
-  detach,
-  /**
-   * Resets the wallpaper to the default.
-   **/
-  reset,
-};
-
-export {
+export default {
   attach,
   detach,
   reset,
 };
-
-export default wallpaper;

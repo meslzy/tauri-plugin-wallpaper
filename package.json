@@ -1,42 +1,41 @@
 {
-  "name": "tauri-plugin-wallpaper",
-  "description": "A Tauri plugin to set your window as wallpaper behind desktop icons",
-  "version": "2.0.2",
-  "author": {
-    "name": "meslzy",
-    "email": "i@meslzy.com",
-    "url": "https://meslzy.com/"
-  },
-  "repository": "github:meslzy/tauri-plugin-wallpaper",
-  "bugs": "https://github.com/meslzy/tauri-plugin-wallpaper/issues",
-  "homepage": "https://github.com/meslzy/tauri-plugin-wallpaper#readme",
-  "main": "dist/main.js",
-  "types": "dist/main.d.ts",
-  "type": "module",
-  "scripts": {
-    "watch": "tsup --watch",
-    "build": "tsup",
-    "lint": "eslint --fix",
-    "prepublishOnly": "npm run build && npm run lint"
-  },
-  "devDependencies": {
-    "@tauri-apps/api": "2.5.0",
-    "@meslzy/eslint": "2.0.3",
-    "@meslzy/tsconfig": "0.2.9",
-    "eslint": "9.29.0",
-    "typescript": "5.8.3",
-    "tsup": "8.5.0"
-  },
-  "peerDependencies": {
-    "@tauri-apps/api": "2.5.0"
-  },
-  "files": [
-    "dist"
-  ],
-  "keywords": [
-    "meslzy",
-    "tauri-plugin",
-    "wallpaper"
-  ],
-  "license": "mit"
+	"name": "tauri-plugin-wallpaper",
+	"description": "A Tauri plugin to set your window as wallpaper behind desktop icons",
+	"version": "3.0.0",
+	"author": {
+		"name": "meslzy",
+		"email": "i@meslzy.com",
+		"url": "https://meslzy.com/"
+	},
+	"repository": "github:meslzy/tauri-plugin-wallpaper",
+	"bugs": "https://github.com/meslzy/tauri-plugin-wallpaper/issues",
+	"homepage": "https://github.com/meslzy/tauri-plugin-wallpaper#readme",
+	"main": "dist/main.mjs",
+	"types": "dist/main.d.mts",
+	"type": "module",
+	"scripts": {
+		"dev": "tsdown --watch",
+		"build": "tsdown",
+		"lint": "biome check --write --unsafe",
+		"prepublishOnly": "npm run build && npm run lint"
+	},
+	"devDependencies": {
+		"@meslzy/tsconfig": "^0.2.9",
+		"@biomejs/biome": "2.3.11",
+		"@tauri-apps/api": "2.9.1",
+		"typescript": "5.9.3",
+		"tsdown": "0.20.1"
+	},
+	"peerDependencies": {
+		"@tauri-apps/api": "^2.9.1"
+	},
+	"files": [
+		"dist"
+	],
+	"keywords": [
+		"meslzy",
+		"tauri-plugin",
+		"wallpaper"
+	],
+	"license": "mit"
 }

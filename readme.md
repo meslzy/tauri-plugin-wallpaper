@@ -14,11 +14,13 @@
 
 ---
 
-## Available platforms (🚧)
+## Platform Support
 
-- [x] Windows
-- [ ] MacOS
-- [ ] Linux
+**Windows Only** - This plugin is exclusively designed for Windows and uses Win32 APIs for desktop wallpaper integration.
+
+- ✅ Windows (Full Support)
+- ❌ macOS (Not Supported)
+- ❌ Linux (Not Supported)
 
 ---
 
@@ -26,17 +28,17 @@
 
 ### Installation (⏬)
 
-  - cargo
+- cargo
 
-    ```bash
-    cargo add tauri-plugin-wallpaper
-    ```
+```bash
+cargo add tauri-plugin-wallpaper
+```
 
-  - npm
+- npm
 
-    ```bash
-    npm install tauri-plugin-wallpaper
-    ```
+```bash
+npm install tauri-plugin-wallpaper
+```
 
 ### How to use (🌠)
 

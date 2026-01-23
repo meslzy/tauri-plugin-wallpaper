@@ -1,0 +1,51 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "vcs": {
+    "enabled": false,
+    "useIgnoreFile": true,
+    "clientKind": "git"
+  },
+  "files": {
+    "includes": [
+      "**/*.ts",
+      "**/*.tsx"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 120,
+    "lineEnding": "lf",
+    "attributePosition": "multiline",
+    "expand": "always"
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "style": {
+        "useImportType": "error",
+        "useFragmentSyntax": "error",
+        "useSelfClosingElements": "error"
+      },
+      "suspicious": {
+        "noConfusingVoidType": "off"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "trailingCommas": "all"
+    }
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on",
+        "useSortedAttributes": "on"
+      }
+    }
+  }
+}
