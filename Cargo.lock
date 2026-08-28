@@ -2783,7 +2783,7 @@ dependencies = [
 
 [[package]]
 name = "tauri-plugin-wallpaper"
-version = "4.0.0"
+version = "4.1.0"
 dependencies = [
  "gdk",
  "gtk",

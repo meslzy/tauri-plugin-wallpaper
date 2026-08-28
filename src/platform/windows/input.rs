@@ -14,15 +14,15 @@
 use std::sync::{LazyLock, Mutex};
 use std::time::{Duration, Instant};
 
-use windows::Win32::Foundation::{HWND, LPARAM, POINT, WPARAM};
+use windows::Win32::Foundation::{HWND, LPARAM, POINT, RECT, WPARAM};
 use windows::Win32::Graphics::Gdi::ScreenToClient;
 use windows::Win32::UI::Input::{
     GetRawInputData, HRAWINPUT, RAWINPUT, RAWINPUTHEADER, RID_DEVICE_INFO_TYPE, RID_INPUT,
     RIM_TYPEKEYBOARD, RIM_TYPEMOUSE,
 };
 use windows::Win32::UI::WindowsAndMessaging::{
-    self, EnumChildWindows, GetAncestor, GetClassNameA, GetForegroundWindow, IsWindow,
-    PostMessageA, GA_ROOT,
+    self, EnumChildWindows, GetAncestor, GetClassNameA, GetForegroundWindow, GetWindowRect,
+    IsWindow, PostMessageA, WindowFromPoint, GA_ROOT,
 };
 
 use super::helper;
@@ -252,10 +252,48 @@ fn make_lparam(low: isize, high: isize) -> LPARAM {
     LPARAM((high << 16) | (low & 0xFFFF))
 }
 
+/// Wheel wParam: signed delta in the high word, MK_* key state in the low
+/// word (we forward no modifier state).
+fn wheel_wparam(delta: i16) -> WPARAM {
+    make_wparam(0, delta as u16 as usize)
+}
+
+/// Whether the cursor sits over this target's window rect. With one
+/// wallpaper per monitor, mouse events are routed only to the window the
+/// cursor is actually on (idea from ZengQifeng1994's fork of
+/// electron-as-wallpaper, reworked to be rect-based).
+fn point_in_target(point: POINT, target: &ForwardTarget) -> bool {
+    let mut rect = RECT::default();
+    if unsafe { GetWindowRect(hwnd(target.host), &mut rect) }.is_err() {
+        return false;
+    }
+    point.x >= rect.left && point.x < rect.right && point.y >= rect.top && point.y < rect.bottom
+}
+
+/// Whether the cursor is over the desktop layer itself (icons, wallpaper,
+/// empty desktop) rather than something floating above it — a tray flyout
+/// or context menu can be open while the desktop still has focus, and
+/// forwarding clicks made on those into the wallpaper would be wrong. The
+/// window under the cursor roots to Progman/WorkerW for anything on the
+/// desktop layer (both the pre- and post-24H2 shell hierarchies).
+fn cursor_over_desktop_layer(point: POINT) -> bool {
+    unsafe {
+        let window = WindowFromPoint(point);
+        if HWND::is_invalid(&window) {
+            return false;
+        }
+        let root = GetAncestor(window, GA_ROOT);
+        let window = if HWND::is_invalid(&root) { window } else { root };
+        let mut class = [0u8; 16];
+        let len = GetClassNameA(window, &mut class) as usize;
+        matches!(&class[..len], b"Progman" | b"WorkerW")
+    }
+}
+
 fn send_mouse_input(msg: u32, point: POINT, w_param: WPARAM) {
     let mut targets = TARGETS.lock().unwrap();
     targets.retain_mut(|target| {
-        if !target.mouse {
+        if !target.mouse || !point_in_target(point, target) {
             return true;
         }
 
@@ -264,6 +302,20 @@ fn send_mouse_input(msg: u32, point: POINT, w_param: WPARAM) {
             let _ = ScreenToClient(hwnd(target.input), &mut client_point);
         }
         let l_param = make_lparam(client_point.x as isize, client_point.y as isize);
+        post_to_target(target, msg, w_param, l_param)
+    });
+}
+
+/// Unlike every other mouse message, WM_MOUSEWHEEL / WM_MOUSEHWHEEL carry
+/// SCREEN coordinates in lParam.
+fn send_mouse_wheel(msg: u32, point: POINT, delta: i16) {
+    let w_param = wheel_wparam(delta);
+    let l_param = make_lparam(point.x as isize, point.y as isize);
+    let mut targets = TARGETS.lock().unwrap();
+    targets.retain_mut(|target| {
+        if !target.mouse || !point_in_target(point, target) {
+            return true;
+        }
         post_to_target(target, msg, w_param, l_param)
     });
 }
@@ -277,6 +329,22 @@ fn handle_mouse_input(raw_data: &RAWINPUT) {
         if WindowsAndMessaging::GetCursorPos(&mut point).is_err() {
             return;
         }
+    }
+
+    // A context menu or tray flyout above the desktop must eat the input.
+    if !cursor_over_desktop_layer(point) {
+        return;
+    }
+
+    if mouse_button_flags & WindowsAndMessaging::RI_MOUSE_WHEEL != 0 {
+        let delta = unsafe { mouse_data.Anonymous.Anonymous.usButtonData } as i16;
+        send_mouse_wheel(WindowsAndMessaging::WM_MOUSEWHEEL, point, delta);
+        return;
+    }
+    if mouse_button_flags & WindowsAndMessaging::RI_MOUSE_HWHEEL != 0 {
+        let delta = unsafe { mouse_data.Anonymous.Anonymous.usButtonData } as i16;
+        send_mouse_wheel(WindowsAndMessaging::WM_MOUSEHWHEEL, point, delta);
+        return;
     }
 
     if mouse_button_flags & WindowsAndMessaging::RI_MOUSE_BUTTON_1_DOWN != 0 {
@@ -347,13 +415,6 @@ fn handle_mouse_input(raw_data: &RAWINPUT) {
         );
         return;
     }
-    if mouse_button_flags
-        & (WindowsAndMessaging::RI_MOUSE_HWHEEL | WindowsAndMessaging::RI_MOUSE_WHEEL)
-        != 0
-    {
-        return;
-    }
-
     // Rate-cap the remaining plain moves.
     {
         let mut last = LAST_MOUSE_MOVE.lock().unwrap();
@@ -463,5 +524,29 @@ pub(super) fn handle_wm_input(l_param: LPARAM) {
         handle_mouse_input(&raw_data);
     } else if device_type == RIM_TYPEKEYBOARD {
         handle_keyboard_input(&raw_data);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn wheel_wparam_packs_signed_delta_in_high_word() {
+        // GET_WHEEL_DELTA_WPARAM reads the high word as a signed short.
+        let up = wheel_wparam(120);
+        assert_eq!((up.0 >> 16) as u16 as i16, 120);
+        assert_eq!(up.0 & 0xFFFF, 0);
+
+        let down = wheel_wparam(-120);
+        assert_eq!((down.0 >> 16) as u16 as i16, -120);
+        assert_eq!(down.0 & 0xFFFF, 0);
+    }
+
+    #[test]
+    fn make_lparam_packs_coordinates() {
+        let l_param = make_lparam(100, 200);
+        assert_eq!(l_param.0 & 0xFFFF, 100);
+        assert_eq!(l_param.0 >> 16, 200);
     }
 }

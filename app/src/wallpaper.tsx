@@ -31,6 +31,10 @@ const App = () => {
     keys: 0,
   });
   const [buttonsDown, setButtonsDown] = React.useState<number[]>([]);
+  const [scroll, setScroll] = React.useState({
+    x: 0,
+    y: 0,
+  });
   const [lastKey, setLastKey] = React.useState("—");
   const [keyHistory, setKeyHistory] = React.useState<
     {
@@ -123,10 +127,18 @@ const App = () => {
       );
     };
 
+    const onWheel = (e: WheelEvent) => {
+      setScroll((s) => ({
+        x: Math.round(s.x + e.deltaX),
+        y: Math.round(s.y + e.deltaY),
+      }));
+    };
+
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mousedown", onMouseDown);
     window.addEventListener("mouseup", onMouseUp);
     window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("wheel", onWheel);
 
     return () => {
       clearInterval(timer);
@@ -135,6 +147,7 @@ const App = () => {
       window.removeEventListener("mousedown", onMouseDown);
       window.removeEventListener("mouseup", onMouseUp);
       window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("wheel", onWheel);
     };
   }, []);
 
@@ -169,6 +182,12 @@ const App = () => {
           <div className="readout">
             <span className="value">{moveRate}</span>
             <span className="label">moves / sec</span>
+          </div>
+          <div className="readout">
+            <span className="value">
+              {scroll.x}, {scroll.y}
+            </span>
+            <span className="label">scroll</span>
           </div>
           <div className="buttons">
             {BUTTON_NAMES.map((name, index) => (

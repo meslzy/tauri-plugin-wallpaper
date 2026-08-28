@@ -219,7 +219,9 @@ All window-layer calls are dispatched to the main thread, which AppKit and GTK r
 
 ### Input Forwarding (Windows)
 
-A hidden helper window registers a global raw-input sink (`RegisterRawInputDevices` with `RIDEV_INPUTSINK`). Raw mouse input is translated into regular window messages (`WM_MOUSEMOVE`, `WM_LBUTTONDOWN`, …) and posted to the WebView2 input window (`Chrome_WidgetWin_1`, resolved at any depth under the Tauri window) of each attached window that opted in, with screen-to-client coordinate mapping. This is the same technique proven in [electron-as-wallpaper](https://github.com/meslzy/electron-as-wallpaper) and [Lively Wallpaper](https://github.com/rocksdanister/lively).
+A hidden helper window registers a global raw-input sink (`RegisterRawInputDevices` with `RIDEV_INPUTSINK`). Raw mouse input — moves, buttons, and vertical/horizontal **wheel** — is translated into regular window messages (`WM_MOUSEMOVE`, `WM_LBUTTONDOWN`, `WM_MOUSEWHEEL`, …) and posted to the WebView2 input window (`Chrome_WidgetWin_1`, resolved at any depth under the Tauri window) of each attached window that opted in, with screen-to-client coordinate mapping. This is the same technique proven in [electron-as-wallpaper](https://github.com/meslzy/electron-as-wallpaper) and [Lively Wallpaper](https://github.com/rocksdanister/lively).
+
+Mouse events are **hit-tested**: they are routed only to the wallpaper window actually under the cursor (so per-monitor wallpapers each get their own input), and never forwarded while a context menu or tray flyout is open above the desktop.
 
 **Keyboard works differently**: Chromium drops synthetic key messages unless the window genuinely has focus (its text-input stack checks real thread focus). So while you are on the desktop, the plugin grants the wallpaper window *real* focus via Tauri — the OS then delivers keyboard input to it natively, and forwarding automatically steps aside to avoid doubled keys. Since the wallpaper window is a WorkerW child, focusing it raises nothing visually.
 
