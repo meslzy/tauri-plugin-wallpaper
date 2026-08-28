@@ -219,7 +219,9 @@ All window-layer calls are dispatched to the main thread, which AppKit and GTK r
 
 ### Input Forwarding (Windows)
 
-A hidden helper window registers a global raw-input sink (`RegisterRawInputDevices` with `RIDEV_INPUTSINK`). Raw mouse input — moves, buttons, and vertical/horizontal **wheel** — is translated into regular window messages (`WM_MOUSEMOVE`, `WM_LBUTTONDOWN`, `WM_MOUSEWHEEL`, …) and posted to the WebView2 input window (`Chrome_WidgetWin_1`, resolved at any depth under the Tauri window) of each attached window that opted in, with screen-to-client coordinate mapping. This is the same technique proven in [electron-as-wallpaper](https://github.com/meslzy/electron-as-wallpaper) and [Lively Wallpaper](https://github.com/rocksdanister/lively).
+A hidden helper window registers a global raw-input sink (`RegisterRawInputDevices` with `RIDEV_INPUTSINK`). Raw mouse moves and buttons are translated into regular window messages (`WM_MOUSEMOVE`, `WM_LBUTTONDOWN`, …) and posted to the WebView2 input window (`Chrome_WidgetWin_1`, resolved at any depth under the Tauri window) of each attached window that opted in, with screen-to-client coordinate mapping. This is the same technique proven in [electron-as-wallpaper](https://github.com/meslzy/electron-as-wallpaper) and [Lively Wallpaper](https://github.com/rocksdanister/lively).
+
+**Wheel** (vertical + horizontal) is delivered differently: Chromium deliberately drops posted wheel messages when the window under the cursor belongs to another process (its `RerouteMouseWheel` hit-test — over the desktop that's explorer's icon list), so the plugin dispatches a DOM `WheelEvent` inside the webview instead, at the element under the cursor, with standard deltas (±100 per notch). Apps receive it via normal `wheel` listeners; being script-dispatched, it won't auto-scroll native scrollbars.
 
 Mouse events are **hit-tested**: they are routed only to the wallpaper window actually under the cursor (so per-monitor wallpapers each get their own input), and never forwarded while a context menu or tray flyout is open above the desktop.
 

@@ -42,10 +42,24 @@ pub(super) struct ForwardTarget {
 
 type FocusFn = std::sync::Arc<dyn Fn(&str) + Send + Sync + 'static>;
 
+/// (label, delta_x, delta_y, client_x, client_y) in DOM wheel conventions.
+pub(crate) type WheelFn = std::sync::Arc<dyn Fn(&str, f64, f64, i32, i32) + Send + Sync + 'static>;
+
 static TARGETS: LazyLock<Mutex<Vec<ForwardTarget>>> = LazyLock::new(|| Mutex::new(Vec::new()));
 static LAST_MOUSE_MOVE: Mutex<Option<Instant>> = Mutex::new(None);
 static LAST_FOCUS_REQUEST: Mutex<Option<Instant>> = Mutex::new(None);
 static FOCUS_CALLBACK: LazyLock<Mutex<Option<FocusFn>>> = LazyLock::new(|| Mutex::new(None));
+static WHEEL_CALLBACK: LazyLock<Mutex<Option<WheelFn>>> = LazyLock::new(|| Mutex::new(None));
+
+/// Registered in `desktop::init`. Wheel cannot be delivered as a posted
+/// window message: Chromium's RerouteMouseWheel hit-tests the cursor with
+/// WindowFromPoint, finds explorer's icon list (a foreign process) above
+/// the wallpaper, and deliberately drops the message
+/// (ui/base/win/mouse_wheel_util.cc). Instead the callback dispatches a
+/// DOM WheelEvent inside the webview via eval.
+pub(crate) fn set_wheel_callback(callback: WheelFn) {
+    *WHEEL_CALLBACK.lock().unwrap() = Some(callback);
+}
 
 /// Registered in `desktop::init`; gives a wallpaper window REAL focus via
 /// tauri (non-blocking — tao posts the activation to the event loop).
@@ -252,12 +266,6 @@ fn make_lparam(low: isize, high: isize) -> LPARAM {
     LPARAM((high << 16) | (low & 0xFFFF))
 }
 
-/// Wheel wParam: signed delta in the high word, MK_* key state in the low
-/// word (we forward no modifier state).
-fn wheel_wparam(delta: i16) -> WPARAM {
-    make_wparam(0, delta as u16 as usize)
-}
-
 /// Whether the cursor sits over this target's window rect. With one
 /// wallpaper per monitor, mouse events are routed only to the window the
 /// cursor is actually on (idea from ZengQifeng1994's fork of
@@ -306,18 +314,34 @@ fn send_mouse_input(msg: u32, point: POINT, w_param: WPARAM) {
     });
 }
 
-/// Unlike every other mouse message, WM_MOUSEWHEEL / WM_MOUSEHWHEEL carry
-/// SCREEN coordinates in lParam.
-fn send_mouse_wheel(msg: u32, point: POINT, delta: i16) {
-    let w_param = wheel_wparam(delta);
-    let l_param = make_lparam(point.x as isize, point.y as isize);
-    let mut targets = TARGETS.lock().unwrap();
-    targets.retain_mut(|target| {
+/// Wheel is delivered through the webview (see [`set_wheel_callback`]),
+/// converted to DOM wheel conventions: one notch (±120) becomes ±100
+/// deltaY pixels, with the sign flipped (wheel-forward is a negative DOM
+/// deltaY), and client coordinates of the target window.
+fn send_mouse_wheel(horizontal: bool, point: POINT, delta: i16) {
+    let callback = WHEEL_CALLBACK.lock().unwrap().clone();
+    let Some(callback) = callback else {
+        return;
+    };
+
+    let notches = delta as f64 / 120.0;
+    let (delta_x, delta_y) = if horizontal {
+        (notches * 100.0, 0.0)
+    } else {
+        (0.0, -notches * 100.0)
+    };
+
+    let targets = TARGETS.lock().unwrap();
+    for target in targets.iter() {
         if !target.mouse || !point_in_target(point, target) {
-            return true;
+            continue;
         }
-        post_to_target(target, msg, w_param, l_param)
-    });
+        let mut client_point = point;
+        unsafe {
+            let _ = ScreenToClient(hwnd(target.input), &mut client_point);
+        }
+        callback(&target.label, delta_x, delta_y, client_point.x, client_point.y);
+    }
 }
 
 fn handle_mouse_input(raw_data: &RAWINPUT) {
@@ -338,12 +362,12 @@ fn handle_mouse_input(raw_data: &RAWINPUT) {
 
     if mouse_button_flags & WindowsAndMessaging::RI_MOUSE_WHEEL != 0 {
         let delta = unsafe { mouse_data.Anonymous.Anonymous.usButtonData } as i16;
-        send_mouse_wheel(WindowsAndMessaging::WM_MOUSEWHEEL, point, delta);
+        send_mouse_wheel(false, point, delta);
         return;
     }
     if mouse_button_flags & WindowsAndMessaging::RI_MOUSE_HWHEEL != 0 {
         let delta = unsafe { mouse_data.Anonymous.Anonymous.usButtonData } as i16;
-        send_mouse_wheel(WindowsAndMessaging::WM_MOUSEHWHEEL, point, delta);
+        send_mouse_wheel(true, point, delta);
         return;
     }
 
@@ -530,18 +554,6 @@ pub(super) fn handle_wm_input(l_param: LPARAM) {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn wheel_wparam_packs_signed_delta_in_high_word() {
-        // GET_WHEEL_DELTA_WPARAM reads the high word as a signed short.
-        let up = wheel_wparam(120);
-        assert_eq!((up.0 >> 16) as u16 as i16, 120);
-        assert_eq!(up.0 & 0xFFFF, 0);
-
-        let down = wheel_wparam(-120);
-        assert_eq!((down.0 >> 16) as u16 as i16, -120);
-        assert_eq!(down.0 & 0xFFFF, 0);
-    }
 
     #[test]
     fn make_lparam_packs_coordinates() {

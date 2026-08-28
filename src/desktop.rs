@@ -32,6 +32,28 @@ pub fn init<R: Runtime, C: DeserializeOwned>(
         }));
     }
 
+    // Wheel cannot be delivered as a posted window message (Chromium's
+    // RerouteMouseWheel drops it — see platform::windows::input); dispatch
+    // a DOM WheelEvent inside the webview instead. Coordinates arrive in
+    // physical pixels; the page converts with its own devicePixelRatio.
+    #[cfg(target_os = "windows")]
+    {
+        let handle = app.clone();
+        platform::windows::input::set_wheel_callback(Arc::new(
+            move |label: &str, delta_x: f64, delta_y: f64, x: i32, y: i32| {
+                if let Some(window) = handle.get_webview_window(label) {
+                    let script = format!(
+                        "(()=>{{const s=window.devicePixelRatio||1;const cx={x}/s,cy={y}/s;\
+                         const t=document.elementFromPoint(cx,cy)||document.documentElement;\
+                         t.dispatchEvent(new WheelEvent('wheel',{{deltaX:{delta_x},deltaY:{delta_y},\
+                         clientX:cx,clientY:cy,bubbles:true,cancelable:true}}));}})()"
+                    );
+                    let _ = window.eval(&script);
+                }
+            },
+        ));
+    }
+
     // Explorer restarts destroy WorkerW; the helper window broadcasts back
     // through this callback so every attached window gets re-parented.
     #[cfg(target_os = "windows")]
