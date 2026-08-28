@@ -1,3 +1,17 @@
 [default]
 description = "Default permissions for the plugin"
-permissions = ["allow-attach", "allow-detach", "allow-reset", "allow-pin", "allow-unpin"]
+permissions = [
+    "allow-attach",
+    "allow-detach",
+    "allow-reset",
+    "allow-pin",
+    "allow-unpin",
+    "allow-capabilities",
+    "allow-is-attached",
+    "allow-is-pinned",
+    "allow-set-interactive",
+    "allow-start-occlusion-monitor",
+    "allow-stop-occlusion-monitor",
+    "allow-set-wallpaper-image",
+    "allow-get-wallpaper-image",
+]

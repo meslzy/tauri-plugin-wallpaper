@@ -1,25 +1,22 @@
-#![cfg(target_os = "windows")]
-
 use tauri::{
     plugin::{Builder, TauriPlugin},
-    Manager, Runtime,
+    Manager, RunEvent, Runtime, WindowEvent,
 };
 
 pub use models::*;
 
-mod desktop;
 mod commands;
+mod desktop;
 mod error;
 mod models;
+mod platform;
+mod state;
 
-mod attacher;
-mod detacher;
-mod pinner;
-mod reseter;
-mod unpinner;
-
+pub use desktop::{
+    Wallpaper, EVENT_ATTACHED, EVENT_DETACHED, EVENT_OCCLUSION, EVENT_PINNED, EVENT_REATTACHED,
+    EVENT_UNPINNED,
+};
 pub use error::{Error, Result};
-use desktop::Wallpaper;
 
 pub trait WallpaperExt<R: Runtime> {
     fn wallpaper(&self) -> &Wallpaper<R>;
@@ -38,12 +35,32 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             commands::detach,
             commands::reset,
             commands::pin,
-            commands::unpin
+            commands::unpin,
+            commands::capabilities,
+            commands::is_attached,
+            commands::is_pinned,
+            commands::set_interactive,
+            commands::start_occlusion_monitor,
+            commands::stop_occlusion_monitor,
+            commands::set_wallpaper_image,
+            commands::get_wallpaper_image
         ])
         .setup(|app, api| {
             let wallpaper = desktop::init(app, api)?;
             app.manage(wallpaper);
             Ok(())
+        })
+        .on_event(|app, event| {
+            if let RunEvent::WindowEvent {
+                label,
+                event: WindowEvent::Destroyed,
+                ..
+            } = event
+            {
+                if let Some(wallpaper) = app.try_state::<Wallpaper<R>>() {
+                    wallpaper.handle_window_destroyed(label);
+                }
+            }
         })
         .build()
 }

@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-start-occlusion-monitor"
+description = "Enables the start_occlusion_monitor command without any pre-configured scope."
+commands.allow = ["start_occlusion_monitor"]
+
+[[permission]]
+identifier = "deny-start-occlusion-monitor"
+description = "Denies the start_occlusion_monitor command without any pre-configured scope."
+commands.deny = ["start_occlusion_monitor"]

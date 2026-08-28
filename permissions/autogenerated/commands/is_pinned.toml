@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-is-pinned"
+description = "Enables the is_pinned command without any pre-configured scope."
+commands.allow = ["is_pinned"]
+
+[[permission]]
+identifier = "deny-is-pinned"
+description = "Denies the is_pinned command without any pre-configured scope."
+commands.deny = ["is_pinned"]

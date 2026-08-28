@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use std::sync::Mutex;
+use std::sync::{LazyLock, Mutex};
 
 use windows::Win32::{
     Foundation::{HWND, LPARAM, LRESULT, WPARAM},
@@ -9,44 +9,28 @@ use windows::Win32::{
     },
 };
 
-static ORIGINAL_WNDPROCS: Mutex<Option<HashMap<isize, isize>>> = Mutex::new(None);
+static ORIGINAL_WNDPROCS: LazyLock<Mutex<HashMap<isize, isize>>> =
+    LazyLock::new(|| Mutex::new(HashMap::new()));
 
 fn get_original_wndproc(hwnd: HWND) -> Option<WNDPROC> {
     let map = ORIGINAL_WNDPROCS.lock().unwrap();
-    if let Some(ref m) = *map {
-        m.get(&(hwnd.0 as isize))
-            .map(|&ptr| unsafe { std::mem::transmute(ptr) })
-    } else {
-        None
-    }
+    map.get(&(hwnd.0 as isize))
+        .map(|&ptr| unsafe { std::mem::transmute(ptr) })
 }
 
 fn set_original_wndproc(hwnd: HWND, wndproc: isize) {
     let mut map = ORIGINAL_WNDPROCS.lock().unwrap();
-    if map.is_none() {
-        *map = Some(HashMap::new());
-    }
-    if let Some(ref mut m) = *map {
-        m.insert(hwnd.0 as isize, wndproc);
-    }
+    map.insert(hwnd.0 as isize, wndproc);
 }
 
 pub fn remove_original_wndproc(hwnd: HWND) -> Option<isize> {
     let mut map = ORIGINAL_WNDPROCS.lock().unwrap();
-    if let Some(ref mut m) = *map {
-        m.remove(&(hwnd.0 as isize))
-    } else {
-        None
-    }
+    map.remove(&(hwnd.0 as isize))
 }
 
 pub fn is_pinned(hwnd: HWND) -> bool {
     let map = ORIGINAL_WNDPROCS.lock().unwrap();
-    if let Some(ref m) = *map {
-        m.contains_key(&(hwnd.0 as isize))
-    } else {
-        false
-    }
+    map.contains_key(&(hwnd.0 as isize))
 }
 
 unsafe extern "system" fn pin_wndproc(
@@ -73,15 +57,24 @@ unsafe extern "system" fn pin_wndproc(
     }
 }
 
-pub fn pin<R: tauri::Runtime>(webview_window: tauri::WebviewWindow<R>) -> crate::Result<()> {
-    let hwnd = webview_window.hwnd().unwrap();
+pub fn pin<R: tauri::Runtime>(webview_window: &tauri::WebviewWindow<R>) -> crate::Result<()> {
+    let hwnd = webview_window.hwnd()?;
 
     if is_pinned(hwnd) {
         return Ok(());
     }
 
     unsafe {
-        SetWindowPos(
+        let original_wndproc =
+            SetWindowLongPtrW(hwnd, GWLP_WNDPROC, pin_wndproc as *const () as isize);
+
+        if original_wndproc == 0 {
+            return Err(crate::Error::SubclassFailed);
+        }
+
+        set_original_wndproc(hwnd, original_wndproc);
+
+        if let Err(error) = SetWindowPos(
             hwnd,
             Some(HWND_TOPMOST),
             0,
@@ -89,13 +82,12 @@ pub fn pin<R: tauri::Runtime>(webview_window: tauri::WebviewWindow<R>) -> crate:
             0,
             0,
             SWP_NOMOVE | SWP_NOSIZE,
-        )
-        .unwrap();
-
-        let original_wndproc =
-            SetWindowLongPtrW(hwnd, GWLP_WNDPROC, pin_wndproc as *const () as isize);
-
-        set_original_wndproc(hwnd, original_wndproc);
+        ) {
+            if let Some(original) = remove_original_wndproc(hwnd) {
+                SetWindowLongPtrW(hwnd, GWLP_WNDPROC, original);
+            }
+            return Err(error.into());
+        }
     }
 
     Ok(())

@@ -1,6 +1,6 @@
 [package]
 name = "tauri-plugin-wallpaper"
-version = "3.0.0"
+version = "4.0.0"
 authors = ["Meslzy"]
 description = "A Tauri plugin to set your window as wallpaper behind desktop icons"
 repository = "https://github.com/meslzy/tauri-plugin-wallpaper"
@@ -8,25 +8,52 @@ homepage = "https://github.com/meslzy/tauri-plugin-wallpaper"
 documentation = "https://docs.rs/tauri-plugin-wallpaper"
 edition = "2021"
 rust-version = "1.93.0"
-include = ["/permissions", "/src", "build.rs", "Cargo.toml"]
+readme = "readme.md"
+include = ["/permissions", "/src", "build.rs", "Cargo.toml", "readme.md"]
 links = "tauri-plugin-wallpaper"
 license = "MIT"
 
 [package.metadata.platforms.support]
-windows = { level = "full", notes = "Windows-only plugin using Win32 APIs" }
-linux = { level = "none", notes = "Not supported - Windows-only plugin" }
-macos = { level = "none", notes = "Not supported - Windows-only plugin" }
-android = { level = "none", notes = "Not supported - Windows-only plugin" }
-ios = { level = "none", notes = "Not supported - Windows-only plugin" }
+windows = { level = "full", notes = "WorkerW wallpaper layer, pin via WNDPROC subclass" }
+macos = { level = "full", notes = "Desktop window level for wallpaper, floating level for pin (except reset)" }
+linux = { level = "partial", notes = "X11 only via window type hints; Wayland returns Unsupported" }
+android = { level = "none", notes = "No desktop window layer" }
+ios = { level = "none", notes = "No desktop window layer" }
 
 [dependencies]
-tauri = "^2.5.1"
-serde = "^1.0.219"
-thiserror = "^2.0.12"
+tauri = { version = "^2.11.5", default-features = false }
+serde = "^1.0.229"
+thiserror = "^2.0.20"
 
-[dependencies.windows]
+# The `wallpaper` crate only supports desktop platforms.
+[target."cfg(any(target_os = \"windows\", target_os = \"macos\", target_os = \"linux\"))".dependencies]
+wallpaper = "^3.2"
+
+# Must track the `windows` version used by tauri (via tao/wry) so HWND types match.
+[target."cfg(target_os = \"windows\")".dependencies.windows]
 version = "^0.61"
-features = ["Win32_Foundation", "Win32_UI_WindowsAndMessaging"]
+features = [
+    "Win32_Foundation",
+    "Win32_UI_WindowsAndMessaging",
+    "Win32_Graphics_Dwm",
+    "Win32_Graphics_Gdi",
+    "Win32_UI_Input",
+    "Win32_UI_Input_KeyboardAndMouse",
+    "Win32_UI_Shell",
+    "Win32_Devices_HumanInterfaceDevice",
+    "Win32_System_LibraryLoader",
+]
+
+[target."cfg(target_os = \"macos\")".dependencies]
+objc2 = "^0.6"
+
+[target."cfg(target_os = \"linux\")".dependencies]
+gtk = "^0.18"
+gdk = "^0.18"
 
 [build-dependencies]
-tauri-plugin = { version = "^2.2.0", features = ["build"] }
+tauri-plugin = { version = "^2.6.3", features = ["build"] }
+
+[dev-dependencies]
+tauri = { version = "^2.11.5", default-features = false, features = ["test"] }
+serde_json = "^1.0"

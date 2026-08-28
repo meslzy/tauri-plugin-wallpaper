@@ -307,6 +307,18 @@
           "markdownDescription": "Denies the attach command without any pre-configured scope."
         },
         {
+          "description": "Enables the capabilities command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-capabilities",
+          "markdownDescription": "Enables the capabilities command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the capabilities command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-capabilities",
+          "markdownDescription": "Denies the capabilities command without any pre-configured scope."
+        },
+        {
           "description": "Enables the detach command without any pre-configured scope.",
           "type": "string",
           "const": "allow-detach",
@@ -317,6 +329,42 @@
           "type": "string",
           "const": "deny-detach",
           "markdownDescription": "Denies the detach command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the get_wallpaper_image command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-get-wallpaper-image",
+          "markdownDescription": "Enables the get_wallpaper_image command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the get_wallpaper_image command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-get-wallpaper-image",
+          "markdownDescription": "Denies the get_wallpaper_image command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the is_attached command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-is-attached",
+          "markdownDescription": "Enables the is_attached command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the is_attached command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-is-attached",
+          "markdownDescription": "Denies the is_attached command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the is_pinned command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-is-pinned",
+          "markdownDescription": "Enables the is_pinned command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the is_pinned command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-is-pinned",
+          "markdownDescription": "Denies the is_pinned command without any pre-configured scope."
         },
         {
           "description": "Enables the pin command without any pre-configured scope.",
@@ -343,6 +391,54 @@
           "markdownDescription": "Denies the reset command without any pre-configured scope."
         },
         {
+          "description": "Enables the set_interactive command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-set-interactive",
+          "markdownDescription": "Enables the set_interactive command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the set_interactive command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-set-interactive",
+          "markdownDescription": "Denies the set_interactive command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the set_wallpaper_image command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-set-wallpaper-image",
+          "markdownDescription": "Enables the set_wallpaper_image command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the set_wallpaper_image command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-set-wallpaper-image",
+          "markdownDescription": "Denies the set_wallpaper_image command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the start_occlusion_monitor command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-start-occlusion-monitor",
+          "markdownDescription": "Enables the start_occlusion_monitor command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the start_occlusion_monitor command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-start-occlusion-monitor",
+          "markdownDescription": "Denies the start_occlusion_monitor command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the stop_occlusion_monitor command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-stop-occlusion-monitor",
+          "markdownDescription": "Enables the stop_occlusion_monitor command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the stop_occlusion_monitor command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-stop-occlusion-monitor",
+          "markdownDescription": "Denies the stop_occlusion_monitor command without any pre-configured scope."
+        },
+        {
           "description": "Enables the unpin command without any pre-configured scope.",
           "type": "string",
           "const": "allow-unpin",
@@ -355,10 +451,10 @@
           "markdownDescription": "Denies the unpin command without any pre-configured scope."
         },
         {
-          "description": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-attach`\n- `allow-detach`\n- `allow-reset`\n- `allow-pin`\n- `allow-unpin`",
+          "description": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-attach`\n- `allow-detach`\n- `allow-reset`\n- `allow-pin`\n- `allow-unpin`\n- `allow-capabilities`\n- `allow-is-attached`\n- `allow-is-pinned`\n- `allow-set-interactive`\n- `allow-start-occlusion-monitor`\n- `allow-stop-occlusion-monitor`\n- `allow-set-wallpaper-image`\n- `allow-get-wallpaper-image`",
           "type": "string",
           "const": "default",
-          "markdownDescription": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-attach`\n- `allow-detach`\n- `allow-reset`\n- `allow-pin`\n- `allow-unpin`"
+          "markdownDescription": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-attach`\n- `allow-detach`\n- `allow-reset`\n- `allow-pin`\n- `allow-unpin`\n- `allow-capabilities`\n- `allow-is-attached`\n- `allow-is-pinned`\n- `allow-set-interactive`\n- `allow-start-occlusion-monitor`\n- `allow-stop-occlusion-monitor`\n- `allow-set-wallpaper-image`\n- `allow-get-wallpaper-image`"
         }
       ]
     }

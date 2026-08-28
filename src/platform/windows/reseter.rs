@@ -7,8 +7,7 @@ pub fn reset() -> crate::Result<()> {
             0,
             None,
             WindowsAndMessaging::SPIF_SENDCHANGE,
-        )
-        .unwrap();
+        )?;
     }
 
     Ok(())

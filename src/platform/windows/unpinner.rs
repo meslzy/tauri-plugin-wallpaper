@@ -2,10 +2,10 @@ use windows::Win32::UI::WindowsAndMessaging::{
     SetWindowLongPtrW, SetWindowPos, GWLP_WNDPROC, HWND_NOTOPMOST, SWP_NOMOVE, SWP_NOSIZE,
 };
 
-use crate::pinner;
+use super::pinner;
 
-pub fn unpin<R: tauri::Runtime>(webview_window: tauri::WebviewWindow<R>) -> crate::Result<()> {
-    let hwnd = webview_window.hwnd().unwrap();
+pub fn unpin<R: tauri::Runtime>(webview_window: &tauri::WebviewWindow<R>) -> crate::Result<()> {
+    let hwnd = webview_window.hwnd()?;
 
     if !pinner::is_pinned(hwnd) {
         return Ok(());
@@ -24,8 +24,7 @@ pub fn unpin<R: tauri::Runtime>(webview_window: tauri::WebviewWindow<R>) -> crat
             0,
             0,
             SWP_NOMOVE | SWP_NOSIZE,
-        )
-        .unwrap();
+        )?;
     }
 
     Ok(())
