@@ -1,10 +1,11 @@
 use windows::{
     core::{s, BOOL},
     Win32::{
-        Foundation::{HWND, LPARAM, WPARAM},
+        Foundation::{HWND, LPARAM, POINT, RECT, WPARAM},
+        Graphics::Gdi::ClientToScreen,
         UI::WindowsAndMessaging::{
-            self, GetSystemMetrics, SetWindowPos, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN,
-            SWP_NOACTIVATE, SWP_NOZORDER,
+            self, GetClientRect, GetSystemMetrics, GetWindowRect, SetWindowPos,
+            SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN, SWP_NOACTIVATE, SWP_NOZORDER,
         },
     },
 };
@@ -108,15 +109,49 @@ pub fn attach<R: tauri::Runtime>(
         if let Some(rect) = options.monitor_rect {
             let virtual_x = GetSystemMetrics(SM_XVIRTUALSCREEN);
             let virtual_y = GetSystemMetrics(SM_YVIRTUALSCREEN);
+            let x = rect.x - virtual_x;
+            let y = rect.y - virtual_y;
             SetWindowPos(
                 hwnd,
                 None,
-                rect.x - virtual_x,
-                rect.y - virtual_y,
+                x,
+                y,
                 rect.width as i32,
                 rect.height as i32,
                 SWP_NOZORDER | SWP_NOACTIVATE,
             )?;
+
+            // Undecorated-but-resizable tauri windows keep an invisible
+            // resize frame (WM_NCCALCSIZE insets, typically 8px on
+            // left/right/bottom), which would leave a black stripe at the
+            // monitor edge. Expand the window so the CLIENT area — what
+            // the webview actually paints — covers the monitor exactly.
+            // (`resizable: false` windows have no insets; this is a no-op.)
+            let mut window_rect = RECT::default();
+            let mut client_rect = RECT::default();
+            let mut client_origin = POINT::default();
+            GetWindowRect(hwnd, &mut window_rect)?;
+            GetClientRect(hwnd, &mut client_rect)?;
+            let _ = ClientToScreen(hwnd, &mut client_origin);
+
+            let inset_left = client_origin.x - window_rect.left;
+            let inset_top = client_origin.y - window_rect.top;
+            let inset_right =
+                (window_rect.right - window_rect.left) - client_rect.right - inset_left;
+            let inset_bottom =
+                (window_rect.bottom - window_rect.top) - client_rect.bottom - inset_top;
+
+            if inset_left != 0 || inset_top != 0 || inset_right != 0 || inset_bottom != 0 {
+                SetWindowPos(
+                    hwnd,
+                    None,
+                    x - inset_left,
+                    y - inset_top,
+                    rect.width as i32 + inset_left + inset_right,
+                    rect.height as i32 + inset_top + inset_bottom,
+                    SWP_NOZORDER | SWP_NOACTIVATE,
+                )?;
+            }
         }
     }
 

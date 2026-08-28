@@ -104,6 +104,10 @@ await attach({
 
 An unknown name rejects with `monitor "..." not found`. One window covers one monitor; for a wallpaper on every display, create one window per monitor and attach each.
 
+Notes:
+- Monitors at negative coordinates (left of / above the primary) work — the plugin maps them into the desktop layer's coordinate space.
+- On Windows, undecorated-but-resizable windows keep an invisible ~8px resize frame; the plugin compensates so the **web content** covers the monitor exactly. Setting `"resizable": false` on wallpaper windows avoids the frame entirely and is recommended.
+
 ## 4. Interactive wallpaper — input forwarding & `setInteractive`
 
 **Windows** — opt into raw input forwarding at attach time:
