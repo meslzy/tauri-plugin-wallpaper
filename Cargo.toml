@@ -9,7 +9,7 @@ documentation = "https://docs.rs/tauri-plugin-wallpaper"
 edition = "2021"
 rust-version = "1.93.0"
 readme = "readme.md"
-include = ["/permissions", "/src", "build.rs", "Cargo.toml", "readme.md"]
+include = ["/permissions", "/src", "/build.rs", "/Cargo.toml", "/readme.md"]
 links = "tauri-plugin-wallpaper"
 license = "MIT"
 
