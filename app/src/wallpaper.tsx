@@ -134,11 +134,15 @@ const App = () => {
       }));
     };
 
+    // Right-clicks are forwarded too; keep WebView2's browser menu off the desktop.
+    const onContextMenu = (e: MouseEvent) => e.preventDefault();
+
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mousedown", onMouseDown);
     window.addEventListener("mouseup", onMouseUp);
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("wheel", onWheel);
+    window.addEventListener("contextmenu", onContextMenu);
 
     return () => {
       clearInterval(timer);
@@ -148,6 +152,7 @@ const App = () => {
       window.removeEventListener("mouseup", onMouseUp);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("contextmenu", onContextMenu);
     };
   }, []);
 
