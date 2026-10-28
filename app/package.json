@@ -6,13 +6,13 @@
     "tauri": "tauri dev"
   },
   "dependencies": {
-    "@tauri-apps/api": "2.11.1",
+    "@tauri-apps/api": "2.12.4",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "tauri-plugin-wallpaper": "file:../"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "2.11.4",
+    "@tauri-apps/cli": "2.12.4",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.5",
     "@vitejs/plugin-react": "6.1.1",
