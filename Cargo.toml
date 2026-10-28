@@ -21,7 +21,7 @@ android = { level = "none", notes = "No desktop window layer" }
 ios = { level = "none", notes = "No desktop window layer" }
 
 [dependencies]
-tauri = { version = "^2.11.5", default-features = false }
+tauri = { version = "^2.12", default-features = false }
 serde = "^1.0.229"
 thiserror = "^2.0.20"
 
@@ -31,7 +31,7 @@ wallpaper = "^3.2"
 
 # Must track the `windows` version used by tauri (via tao/wry) so HWND types match.
 [target."cfg(target_os = \"windows\")".dependencies.windows]
-version = "^0.61"
+version = "^0.62"
 features = [
     "Win32_Foundation",
     "Win32_UI_WindowsAndMessaging",
@@ -55,5 +55,5 @@ gdk = "^0.18"
 tauri-plugin = { version = "^2.6.3", features = ["build"] }
 
 [dev-dependencies]
-tauri = { version = "^2.11.5", default-features = false, features = ["test"] }
+tauri = { version = "^2.12", default-features = false, features = ["test"] }
 serde_json = "^1.0"
