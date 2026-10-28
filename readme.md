@@ -92,6 +92,8 @@ cargo add tauri-plugin-wallpaper
 npm install tauri-plugin-wallpaper
 ```
 
+Requires Tauri **2.12+**: the plugin's `windows` crate has to match the one Tauri uses (0.62). On Tauri 2.11, use `tauri-plugin-wallpaper` 4.0.x.
+
 ---
 
 ## Usage

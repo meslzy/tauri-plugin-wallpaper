@@ -9,6 +9,8 @@ cargo add tauri-plugin-wallpaper
 npm install tauri-plugin-wallpaper
 ```
 
+Requires Tauri 2.12+ (on Tauri 2.11, use plugin 4.0.x).
+
 Register the plugin (`src-tauri/src/lib.rs`):
 
 ```rust
@@ -124,6 +126,7 @@ How it behaves (important):
 - Input flows **only while the desktop is focused** — click the desktop or press Win+D first. While you work in other apps, nothing is forwarded (this is what keeps the system lag-free).
 - Mouse events arrive in your page as normal DOM events (`mousemove`, `mousedown`, `wheel`, …).
 - Events are hit-tested to the wallpaper under the cursor — with one wallpaper per monitor, each gets only its own input — and are suppressed while a context menu or tray flyout is open above the desktop.
+- Right-clicks are forwarded too, so WebView2 opens its browser menu (Back / Refresh / Print …) on the desktop unless your page prevents it: `window.addEventListener("contextmenu", (e) => e.preventDefault())`. Your own `contextmenu` / `mousedown` handlers still fire.
 - Keyboard works by the plugin giving the wallpaper window *real* (invisible) focus while you're on the desktop — keys then arrive natively. Clicking an icon takes focus back; the plugin re-grabs it about once a second while you stay on the desktop.
 
 **macOS** — there is no forwarding; instead, temporarily raise the window so the user can interact with it, then send it back:
@@ -209,6 +212,8 @@ A nice pattern: capture a frame of your animated wallpaper on app exit and set i
 | Symptom | Cause / fix |
 |---|---|
 | Input forwarding "does nothing" | Input flows only while the desktop is focused — click the desktop or Win+D first. |
+| Browser menu (Back / Refresh / Print …) on desktop right-click | Forwarded right-clicks reach the webview — `preventDefault()` the `contextmenu` event in your wallpaper page. |
+| Build fails with `mismatched types` around `HWND` | Tauri and the plugin use different `windows` crate versions — plugin 4.1+ needs Tauri 2.12+, plugin 4.0.x needs Tauri 2.11. |
 | Laggy/slow in dev | `tauri dev` is a debug build; test feel with `tauri dev --release` or a built app. |
 | Wallpaper gone after Explorer crash | Handled automatically — listen to `onReattached`. |
 | `Unsupported` errors on Linux | You're on Wayland; only `setWallpaperImage`/`getWallpaperImage` work there. Check `capabilities()`. |
